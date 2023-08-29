@@ -39,12 +39,17 @@ int main()
 		case 1:
 			int val;
 			cout << "\033[2J\033[1;1H";  //Clear screen command
-			cout << "\nEnter the value to be pushed: ";
-			cin >> val;
-			q1.AddItem(val);
-			cout << "\033[2J\033[1;1H";  //Clear screen command
-			cout << "\n\t\t\t\tValue Pushed !";
-			std::this_thread::sleep_for(std::chrono::milliseconds(1500)); //Sleep for 1.5 seconds
+			if (!q1.isFull())
+			{
+				cout << "\nEnter the value to be pushed: ";
+				cin >> val;
+				q1.AddItem(val);
+				cout << "\033[2J\033[1;1H";  //Clear screen command
+				cout << "\n\t\t\t\tValue Pushed !";
+				std::this_thread::sleep_for(std::chrono::milliseconds(1500)); //Sleep for 1.5 seconds
+			}
+			else cout << "\nERROR: QUEUE FULL! FAILED TO PUSH ITEM";
+			std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 			break;
 
 		case 2:

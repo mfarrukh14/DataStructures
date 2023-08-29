@@ -4,7 +4,7 @@
 using namespace std;
 
 //Default Queue Capacity set to 200
-#define DEFAULT_QUEUE_CAPACITY 200
+#define DEFAULT_QUEUE_CAPACITY 3
 
 //Dynamic Queue that can handle multiple data types
 template<typename T>
