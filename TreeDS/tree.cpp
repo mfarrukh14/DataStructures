@@ -1,119 +1,150 @@
-#include <iostream>
-#include <memory>
-#include <string>
+#include<iostream>
+#include<memory>
+#include<string>
 
-// A template class for the tree node
-template <typename T>
-class TreeNode {
+using namespace std;
+
+template<typename T>
+class TreeNode
+{
 public:
+
     T value;
-    std::shared_ptr<TreeNode<T>> left;
-    std::shared_ptr<TreeNode<T>> right;
+    shared_ptr<TreeNode<T>> left;
+    shared_ptr<TreeNode<T>> right;
 
-    TreeNode(T val) : value(val), left(nullptr), right(nullptr) {}
+    TreeNode(T val): value(val), left(nullptr), right(nullptr) {}
 };
 
-// A template class for the binary tree
-template <typename T>
-class BinaryTree {
-public:
-    std::shared_ptr<TreeNode<T>> root;
 
-    BinaryTree() : root(nullptr) {}
+template<typename T>
 
-    void insert(const T& val) {
-        if (root == nullptr) {
-            root = std::make_shared<TreeNode<T>>(val);
-        } else {
-            insertHelper(root, val);
-        }
-    }
-
-    void inorder() const {
-        inorderHelper(root);
-    }
-
+class BinaryTree
+{
 private:
-    void insertHelper(std::shared_ptr<TreeNode<T>> node, const T& val) {
-        if (val < node->value) {
-            if (node->left == nullptr) {
-                node->left = std::make_shared<TreeNode<T>>(val);
-            } else {
-                insertHelper(node->left, val);
-            }
-        } else {
-            if (node->right == nullptr) {
-                node->right = std::make_shared<TreeNode<T>>(val);
-            } else {
-                insertHelper(node->right, val);
-            }
+shared_ptr<TreeNode<T>> root;
+
+void insertHelper(shared_ptr<TreeNode<T>> node, const T& val)
+{
+    if(!root) root = make_shared<TreeNode<T>>(val);
+
+    else if(val < node->value)
+    {
+        if(node->left == nullptr)
+        {
+            node->left = make_shared<TreeNode<T>>(val);
         }
+        else insertHelper(node->left, val);
     }
 
-    void inorderHelper(std::shared_ptr<TreeNode<T>> node) const {
-        if (node != nullptr) {
-            inorderHelper(node->left);
-            std::cout << node->value << " ";
-            inorderHelper(node->right);
-        }
+    else if(val >= node->value)
+    {
+        if(node->right == nullptr) node->right = make_shared<TreeNode<T>>(val);
+        else insertHelper(node->right, val);
     }
-};
 
-// Define a sample user class
-class User {
+}
+
+shared_ptr<TreeNode<T>> findMin(shared_ptr<TreeNode<T>> node)
+{
+    while(node != nullptr)
+    {
+        node = node->left;
+    }
+    return node;
+}
+
+shared_ptr<TreeNode<T>> removeHelper(shared_ptr<TreeNode<T>> node, const T& val)
+{
+    if(!node)
+    {
+        return node;
+    }
+
+    if(val < node->value)
+
+    {
+        removeHelper(node->left, val);
+    }
+
+    if(val > node->value)
+    {
+        insertHelper(node->right, val);
+    }
+    else{
+        if(node->left == nullptr) return node->right;
+        else if(node->right == nullptr) return node->left;
+
+        node->value = findMin(node->right)->value;
+        node->right = removeHelper(node->right, node->value);
+    }
+    return node;
+}
+
+void inOrderHelper(shared_ptr<TreeNode<T>> node)
+{
+    if(!root)
+    {
+        cout << "\nTree empty\n";
+        return;
+    }
+    if(node != nullptr)
+    {
+        inOrderHelper(node->left);
+        cout << node->value << " ";
+        inOrderHelper(node->right);
+    }
+}
+
 public:
-    std::string name;
-    int age;
 
-    User(std::string n, int a) : name(n), age(a) {}
+BinaryTree(): root(nullptr){}
 
-    bool operator<(const User& other) const {
-        return age < other.age;
-    }
+void insert(const T& val)
+{
+    insertHelper(root, val);
+}
 
-    bool operator>(const User& other) const {
-        return age > other.age;
-    }
+void remove(const T& val)
+{
+    root = removeHelper(root, val);
+}
 
-    friend std::ostream& operator<<(std::ostream& os, const User& user) {
-        os << "User(Name: " << user.name << ", Age: " << user.age << ")";
-        return os;
-    }
+void inOrder()
+{
+    inOrderHelper(root);
+}
+
+void clear()
+{
+    root.reset();
+}
+
 };
 
-int main() {
-    BinaryTree<int> intTree;
-    intTree.insert(10);
-    intTree.insert(5);
-    intTree.insert(15);
-    intTree.insert(3);
-    intTree.insert(7);
 
-    std::cout << "Inorder traversal of int tree: ";
-    intTree.inorder();
-    std::cout << std::endl;
+int main()
+{
 
-    BinaryTree<std::string> stringTree;
-    stringTree.insert("apple");
-    stringTree.insert("banana");
-    stringTree.insert("cherry");
-    stringTree.insert("date");
-    stringTree.insert("fig");
+    BinaryTree<string> b1;
 
-    std::cout << "Inorder traversal of string tree: ";
-    stringTree.inorder();
-    std::cout << std::endl;
+    b1.insert("Farrukh");
+    b1.insert("Naveed");
+    b1.insert("Homera");
 
-    BinaryTree<User> userTree;
-    userTree.insert(User("Alice", 30));
-    userTree.insert(User("Bob", 25));
-    userTree.insert(User("Charlie", 35));
-    userTree.insert(User("David", 20));
-    userTree.insert(User("Eve", 40));
+    b1.inOrder();
 
-    std::cout << "Inorder traversal of user tree: ";
-    userTree.inorder();
-    std::cout << std::endl;
+    cout << "\n";
+
+    b1.remove("Farrukh");
+    b1.remove("Naveed");
+    b1.remove("Homera");
+
+    //b1.insert("1");
+
+    b1.inOrder();
+
+
 
     return 0;
 }
